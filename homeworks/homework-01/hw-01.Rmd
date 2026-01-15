@@ -33,9 +33,38 @@ Consider the following scenario:
 
 a.  Identify the response and predictor variable.
 
+    The response variable in this case would be the number of chir. ps, and the predictor would be the temperature.
+
 b.  Write the complete specification of the statistical model.
 
-c.  Write the assumptions for linear regression in the context of the problem.
+    $$
+    Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+     
+    $$
+
+$$
+i= 1,..,n
+$$
+
+Y_i = number of chirps per minute at the ith observation
+
+X_i = temperature at the ith observation
+
+B_0 = the expected chirps per minute when the temperature is 0
+
+B_1 = the expected increase in chirps per minute for every one unit increase in temperature
+
+e_i = random normal error term
+
+a.  Write the assumptions for linear regression in the context of the problem.
+
+    Normality- The data are approximately normally distributed
+
+    Independence - Chirp counts from different minutes are counted for and not repeated.
+
+    Constant Variance - The variability of is the same across all temperatures.
+
+    Linearity - There is a linear relationship between the mean response and the predictor variables.
 
 ## Exercise 2
 
@@ -47,7 +76,11 @@ Consider the following scenario:
 
 a.  Identify the response and predictor variables.
 
+    The response variable in this case would be the depression score. The predictor variables are the treatment group (estrogen patch or not) and visits.
+
 b.  Identify which model assumption(s) are violated. Briefly explain your choice.
+
+    The model assumption that is violated is the assumption of independence because the same patients were recorded for the same thing on 6 different occasions therefore the patients are correlated.
 
 ## Exercise 3
 
@@ -56,7 +89,12 @@ b.  Identify which model assumption(s) are violated. Briefly explain your choice
 Use the [Kentucky Derby case study](https://bookdown.org/roback/bookdown-BeyondMLR/ch-MLRreview.html#review-of-multiple-linear-regression) in Chapter 1 of *Beyond Multiple Linear Regression.*
 
 a.  Consider [Equation (1.3)](https://bookdown.org/roback/bookdown-BeyondMLR/ch-MLRreview.html#multiple-linear-regression-with-two-predictors) in Section 1.6.3. Show why we have to be sure to say "holding year constant", "after adjusting for year", or an equivalent statement, when interpreting $\beta_2$.
-b.  Briefly explain why there is no error (random variation) term $\epsilon_i$ in [Equation (1.4)](https://bookdown.org/roback/bookdown-BeyondMLR/ch-MLRreview.html#multiple-linear-regression-with-an-interaction-term) in Section 1.6.6?
+
+    We have to say holding year constant because $$\beta_2$$ represents the difference in expected win speed between fast and non fast track conditions for the same year. Since the variables year and fast are correlated, not saying "holding year constant" would incorrectly attribute improvements over time to the effect of the fast track conditions.
+
+b.   Briefly explain why there is no error (random variation) term $\epsilon_i$ in [Equation (1.4)](https://bookdown.org/roback/bookdown-BeyondMLR/ch-MLRreview.html#multiple-linear-regression-with-an-interaction-term) in Section 1.6.6?
+
+    There is no error term in the equation because it represents the fitted values from the model, and not the random data generating process. The random error term is apart of the true model for Y_i but it is dropped when writing the deterministic equation for the estimated mean response.
 
 ## Exercise 4
 
@@ -90,7 +128,7 @@ The goal of this analysis is to use characteristics of 593 colleges and universi
 The data set is located in `college-data.csv` in the `data` folder. We will focus on the following variables:
 
 | variable           | class     | description                                                                           |
-|:--------------|:--------------|:-----------------------------------------|
+|:----------------|:----------------|:--------------------------------------|
 | name               | character | Name of school                                                                        |
 | state_name         | character | state name                                                                            |
 | type               | character | Public or private                                                                     |
