@@ -1,6 +1,6 @@
 ---
 title: "STA 310: Homework 1"
-author: 
+author: Tamya Davidson
 output: 
      pdf_document
 font-size: 8px
@@ -15,9 +15,9 @@ font-size: 8px
 -   Be sure all analysis code is displayed in the rendered pdf.
 -   If you are fitting a model, display the model output in a neatly formatted table. (The `tidy` and `kable` functions can help!)
 -   If you are creating a plot, use clear and informative labels and titles.
--   Render and back up your work reguarly, such as using Github. 
+-   Render and back up your work reguarly, such as using Github.
 -   When you're done, we should be able to render the final version of the Rmd document to fully reproduce your pdf.
-- Upload your pdf to Gradescope. Upload your Rmd, pdf (and any data) to Canvas. 
+-   Upload your pdf to Gradescope. Upload your Rmd, pdf (and any data) to Canvas.
 
 # Exercises
 
@@ -90,7 +90,7 @@ The goal of this analysis is to use characteristics of 593 colleges and universi
 The data set is located in `college-data.csv` in the `data` folder. We will focus on the following variables:
 
 | variable           | class     | description                                                                           |
-|:------------|:------------|:---------------------------------------------|
+|:--------------|:--------------|:-----------------------------------------|
 | name               | character | Name of school                                                                        |
 | state_name         | character | state name                                                                            |
 | type               | character | Public or private                                                                     |
@@ -102,21 +102,18 @@ a.  Visualize the distribution of the response variable `early_career_pay`. Writ
 b.  Visualize the relationship between (i) `early_career_pay` and `type` and (ii) `early_career_pay` and `stem_percent`. Write an observation from each plot.
 c.  Below is the specification of the statistical model for this analysis. Fit the model and neatly display the results using 3 digits. Display the 95% confidence interval for the coefficients.
 
-
+```{=tex}
 \begin{align}
 early\_career\_pay_{i} = \beta_0 &+ \beta_1~out\_of\_state\_total_{i} + \beta_2 ~ type \\
 &+ \beta_3 ~ stem\_percent_{i} + \beta_4 ~ type * stem\_percent_{i} \\ &+ \epsilon_{i}, \hspace{5mm} \text{where } \epsilon_i \sim N(0, \sigma^2)
 \end{align}
-
-
-
+```
 d.  How many degrees of freedom are there in the estimate of the regression standard error $\sigma$?
 e.  What is the 95% confidence interval for the amount in which the intercept for public institutions differs from private institutions?
 
 ## Exercise 6
 
 Use the analysis from the previous exercise to write a paragraph (\~ 4 - 5 sentences) describing the differences in early career pay based on the institution characteristics. *The summary should be consistent with the results from the previous exercise, comprehensive, answers the primary analysis question, and tells a cohesive story (e.g., a list of interpretations will not receive full credit).*
-
 
 # Grading
 
