@@ -171,7 +171,46 @@ The data set is located in `college-data.csv` in the `data` folder. We will focu
 | out_of_state_total | double    | Total cost for in-state residents in USD (sum of room & board + out of state tuition) |
 
 a.  Visualize the distribution of the response variable `early_career_pay`. Write 1 - 2 observations from the plot.
+
+    ```{r}
+
+    college_data <- read_csv("~/STA310/generalized-linear-models/homeworks/data/college-data.csv")
+
+    hist(college_data$early_career_pay,
+         main = "Distribution of Early Career Pay",
+         xlab = "Early Career Pay (USD)",
+         ylab = "Frequency",
+         col = "green",
+         breaks = 30)
+
+    ```
+
+    Some observations of this plot are that the most common early carer pay lie between the range of about \$47,000 to about \$52,000. The data appear to be right skewed as there are very few values higher than \$60,000 in comparison to the values lower than \$60,000.
+
 b.  Visualize the relationship between (i) `early_career_pay` and `type` and (ii) `early_career_pay` and `stem_percent`. Write an observation from each plot.
+
+    ```{r}
+    boxplot(early_career_pay ~ type, data = college_data,
+            main = "Early Career Pay by College Type",
+            xlab = "College Type",
+            ylab = "Early Career Pay (USD)",
+            col = c("lightblue", "lightgreen"))
+    ```
+
+    From this box plot, we can see that the median early career pay is higher for private colleges than it is for public colleges. We can also see that highest early career pay is accounted for a private institution.
+
+    ```{r}
+    plot(college_data$stem_percent, college_data$early_career_pay,
+         main = "Early Career Pay vs STEM Percent",
+         xlab = "STEM Percent",
+         ylab = "Early Career Pay (USD)",
+         pch = 19, cex = 0.6, col = "darkblue")
+    abline(lm(early_career_pay ~ stem_percent, data = college_data), col = "red")
+
+    ```
+
+    From this plot, we can see that there is no clear relationship between STEM Percent and early career pay when STEM percent is below 40%, however when STEM percent is above 40% we see that there is a positive correlation between STEM Percent and early career pay. So, for values of STEM Percent above 40%, as STEM percent increases, Early Career Pay also increases.
+
 c.  Below is the specification of the statistical model for this analysis. Fit the model and neatly display the results using 3 digits. Display the 95% confidence interval for the coefficients.
 
 ```{=tex}
@@ -180,8 +219,33 @@ early\_career\_pay_{i} = \beta_0 &+ \beta_1~out\_of\_state\_total_{i} + \beta_2 
 &+ \beta_3 ~ stem\_percent_{i} + \beta_4 ~ type * stem\_percent_{i} \\ &+ \epsilon_{i}, \hspace{5mm} \text{where } \epsilon_i \sim N(0, \sigma^2)
 \end{align}
 ```
+```{r}
+library(broom)
+modelearly <- lm(early_career_pay ~ out_of_state_total + type + stem_percent + type:stem_percent,
+            data = college_data)
+tidy_modelearly <- tidy(model) %>%
+  mutate(across(where(is.numeric), ~ round(., 3)))
+tidy_modelearly
+
+```
+
+```{r}
+confint(modelearly) %>%
+  round(3)
+```
+
 d.  How many degrees of freedom are there in the estimate of the regression standard error $\sigma$?
+
+    Degrees of freedom = number of observations - number of parameters estimated. 593 (observations in the data set) - 5 (parameters estimated in the model (intercept, out_of_state_total , type, stem_percent, type:stem_percent)
+
 e.  What is the 95% confidence interval for the amount in which the intercept for public institutions differs from private institutions?
+
+    ```{r}
+    confint(modelearly)[grep("type", rownames(confint(model))), ]
+
+    ```
+
+The difference in intercepts between public and private institutions is represented by $$\beta_2 = typePublic$$. The 95% confidence interval for this difference is (-324.813, 2694.853).
 
 ## Exercise 6
 
