@@ -37,10 +37,9 @@ a.  Identify the response and predictor variable.
 
 b.  Write the complete specification of the statistical model.
 
-    $$
-    Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
-     
-    $$
+    \$\$ Y_i = \beta\_0 + \beta\_1 X_i + \epsilon\_i
+
+    \$\$
 
 $$
 i= 1,..,n
@@ -92,9 +91,11 @@ a.  Consider [Equation (1.3)](https://bookdown.org/roback/bookdown-BeyondMLR/ch-
 
     We have to say holding year constant because $$\beta_2$$ represents the difference in expected win speed between fast and non fast track conditions for the same year. Since the variables year and fast are correlated, not saying "holding year constant" would incorrectly attribute improvements over time to the effect of the fast track conditions.
 
-b.   Briefly explain why there is no error (random variation) term $\epsilon_i$ in [Equation (1.4)](https://bookdown.org/roback/bookdown-BeyondMLR/ch-MLRreview.html#multiple-linear-regression-with-an-interaction-term) in Section 1.6.6?
+b.  Briefly explain why there is no error (random variation) term $\epsilon_i$ in [Equation (1.4)](https://bookdown.org/roback/bookdown-BeyondMLR/ch-MLRreview.html#multiple-linear-regression-with-an-interaction-term) in Section 1.6.6?
 
-    There is no error term in the equation because it represents the fitted values from the model, and not the random data generating process. The random error term is apart of the true model for Y_i but it is dropped when writing the deterministic equation for the estimated mean response.
+```         
+There is no error term in the equation because it represents the fitted values from the model, and not the random data generating process. The random error term is apart of the true model for Y_i but it is dropped when writing the deterministic equation for the estimated mean response.
+```
 
 ## Exercise 4
 
@@ -111,11 +112,44 @@ We will use the following variables:
 
 a.  Fit a linear regression model with `price` as the response variable and `sqft` as the predictor variable (Model 1). Interpret the slope coefficient in terms of the expected change in price when `sqft` increases by 100.
 
+    ```{r #load data}
+    library(readr)
+    kingCountyHouses <- read_csv("~/STA310/generalized-linear-models/homeworks/data/kingCountyHouses.csv")
+
+
+    ```
+
+    ```{r}
+    model1 <- lm(price ~ sqft, data = kingCountyHouses)
+    summary(model1)
+
+    ```
+
+    Increasing the size of a house by 100 square feet is associated with an average increase in selling price of about \$28,000 while holding everything else constant.
+
 b.  Fit Model 2, where `logprice` (the natural log of price) is now the response variable and `sqft` is still the predictor variable. How is the `logprice` expected to change when `sqft` increases by 100?
+
+    ```{r}
+    model2 <- lm(log(price) ~ sqft, data = kingCountyHouses)
+    summary(model2)
+
+    ```
+
+    When the interior square footage of a home increases by 100 square feet, the expected value of logprice increases by 0.0399 (\~4% increase in price for a 100 square foot increase in size).
 
 c.  Recall that $log(a) - log(b) = log(\frac{a}{b})$. Use this to derive how the `price` is expected to change when `sqft` increases by 100 based on Model 2.
 
+    From model2 $$log(price) \space = \beta_0+\beta_1sqft$$, if sqft increases by 100 the change in logprice is $$\Delta log(price) = 100\beta_1$$. Log identity = $$log(price_n) - log(price_o) = log(price_n/log(price_o)) = 100\beta_1$$. Where $$\beta_1 = 0.0003987$$, $$log(price_n) / log(price_o)=0.0399$$. Exponentiating = $$price_n/price_o = $$e\^0.0399 = 1.041. Thus, when squarefeet increases by 100, the expected price increases by a factor of about 1.041 , \~4.1% increase in price.
+
 d.  Fit Model 3, where `price` and `logsqft` (the natural log of sqft) are the response and predictor variables, respectively. How does the price expected to change when sqft increases by 10%? *As a hint, this is the same as multiplying sqft by 1.10.*
+
+    ```{r}
+    model3 <- lm(price ~ log(sqft), data = kingCountyHouses)
+    summary(model3)
+
+    ```
+
+    When interior square footage increases by 10%, the expected selling price increases by approximately \$50,000, on average.
 
 ::: callout-tip
 [Click here](https://github.com/STA210-Sp19/supplemental-notes/blob/master/log-transformations.pdf) for notes on interpreting model effects for log-transformed response and/or predictor variables.
@@ -128,7 +162,7 @@ The goal of this analysis is to use characteristics of 593 colleges and universi
 The data set is located in `college-data.csv` in the `data` folder. We will focus on the following variables:
 
 | variable           | class     | description                                                                           |
-|:----------------|:----------------|:--------------------------------------|
+|:------------|:------------|:---------------------------------------------|
 | name               | character | Name of school                                                                        |
 | state_name         | character | state name                                                                            |
 | type               | character | Public or private                                                                     |
