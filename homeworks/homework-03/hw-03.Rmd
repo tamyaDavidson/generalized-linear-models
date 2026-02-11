@@ -10,71 +10,110 @@ library(magrittr)
 library(kableExtra)
 ```
 
-# Instructions
+# Exercise 1 and 2 
 
--   Write all narrative using full sentences. Write all interpretations and conclusions in the context of the data.
--   Be sure all analysis code is displayed in the rendered pdf.
--   If you are fitting a model, display the model output in a neatly formatted table. (The `tidy` and `kable` functions can help!)
--   If you are creating a plot, use clear and informative labels and titles.
--   Render and back up your work reguarly, such as using Github. 
--   When you're done, we should be able to render the final version of the Rmd document to fully reproduce your pdf.
-- Upload your pdf to Gradescope. Upload your Rmd, pdf (and any data) to Canvas. 
+Can be found in `question 1 and 2 images` file.
 
-# Exercises
-
-## Exercise 1
-
-Write out the likelihood for the Poisson distribution for $x_{1:n}.$
-
-The probability mass function (PMF) of a Poisson-distributed random variable \( X \) with parameter \( \lambda \) is given by:
-
-\[
-P(X = x) = \frac{\lambda^x e^{-\lambda}}{x!}, \quad x = 0, 1, 2, \dots
-\]
-
-where \( \lambda > 0 \) is the rate parameter, which represents both the mean and variance of the distribution.
-
-## Exercise 2
-
-Derive using calculus based methods the MLE of $\lambda$ is $\sum_i x_i/n$ (sample mean) and show that it is in fact a maximum. 
-
-## Exercise 3 
+# Exercise 3
 
 Verify using a grid-search that your solution matches to the calculus based one, where you may assume for simplicity that $\sum_i x_i = 500.$ You may assume 100 observations. (Hint: show that the approximated MLE is 5.)
 
+```{r}
+# initial value .1 bc 0 is undefined
+lambda <- seq(0.1, 10, by = 0.001)
+# poisson log likelohood 
+loglik <- -100*lambda + 500*log(lambda)
+# find the max value
+lambda[which.max(loglik)]
+  
+```
+
 ## Exercise 4 (Derived from Chapter 2 of BMLR).
 
-**The hot hand in basketball.**  @Gilovich1985 wrote a controversial but compelling article claiming that there is no such thing as “the hot hand” in basketball.  That is, there is no empirical evidence that shooters have stretches where they are more likely to make consecutive shots, and basketball shots are essentially independent events.  One of the many ways they tested for evidence of a “hot hand” was to record sequences of shots for players under game conditions and determine if players are more likely to make shots after made baskets than after misses.  For instance, assume we recorded data from one player's first 5 three-point attempts over a 5-game period.  We can assume games are independent, but we’ll consider two models for shots within a game:
+**The hot hand in basketball.** @Gilovich1985 wrote a controversial but compelling article claiming that there is no such thing as "the hot hand" in basketball. That is, there is no empirical evidence that shooters have stretches where they are more likely to make consecutive shots, and basketball shots are essentially independent events. One of the many ways they tested for evidence of a "hot hand" was to record sequences of shots for players under game conditions and determine if players are more likely to make shots after made baskets than after misses. For instance, assume we recorded data from one player's first 5 three-point attempts over a 5-game period. We can assume games are independent, but we'll consider two models for shots within a game:
 
-- No Hot Hand (1 parameter): $p_B$ = probability of making a basket (thus $1-p_B$ = probability of not making a basket).
+-   No Hot Hand (1 parameter): $p_B$ = probability of making a basket (thus $1-p_B$ = probability of not making a basket).
 
-- Hot Hand (2 parameters): $p_B$ = probability of making a basket after a miss (or the first shot of a game); $p_{B|B}$ = probability of making a basket after making the previous shot.
+-   Hot Hand (2 parameters): $p_B$ = probability of making a basket after a miss (or the first shot of a game); $p_{B|B}$ = probability of making a basket after making the previous shot.
 
-a. Fill out Table \@ref(tab:hothandchp2)---write out the contribution of each game to the likelihood for both models along with the total likelihood for each model.
+a.  Fill out Table \@ref(tab:hothandchp2)---write out the contribution of each game to the likelihood for both models along with the total likelihood for each model.
 
-b. Given that, for the No Hot Hand model, $\textrm{Lik}(p_B)=p_B^{10}(1-p_B)^{15}$ for the 5 games where we collected data, how do we know that 0.40 (the maximum likelihood estimator (MLE) of $p_B$) is a better estimate than, say, 0.30?
+b.  Given that, for the No Hot Hand model, $\textrm{Lik}(p_B)=p_B^{10}(1-p_B)^{15}$ for the 5 games where we collected data, how do we know that 0.40 (the maximum likelihood estimator (MLE) of $p_B$) is a better estimate than, say, 0.30?
 
-c. Find the MLEs for the parameters in each model, and then use those MLEs to determine if there's significant evidence that the hot hand exists using a likelihood ratio test (LRT). Be sure to specify the test and provide all details of your approach, including reproducible code used. 
+    We know 0.40 is a better estimate than 0.30 because it maximizes the likelihood of observing the data. Plugging in the values, Lik(.40) = .4^10^ \* .6^15^ is larger than Lik(.3) = .3^10^ \* .7\^15. Therefore, .4 makes the observed sequence of makes and misses more probable, which is exactly what the MLE chooses.
 
-| Game | First five shots  | Likelihood (no hot hand) | Likelihood (hot hand)
-|--------|-----------------|--------------------------|-----------------------|
-| 1      | BMMBB            |                         |                       |
-| 2      | MBMBM            |                         |                       |
-| 3      | MMBBB            |                         |                       |
-| 4      | BMMMB            |                         |                       |
-| 5      | MMMMM            |                         |                       |
+c.  Find the MLEs for the parameters in each model, and then use those MLEs to determine if there's significant evidence that the hot hand exists using a likelihood ratio test (LRT). Be sure to specify the test and provide all details of your approach, including reproducible code used.
 
+    ```{r}
+    # no Hot Hand log-likelihood
+    logL0 <- function(pB) {
+      10*log(pB) + 15*log(1 - pB)
+    }
 
+    # hot Hand log-likelihood
+    logL1 <- function(pB, pBB) {
+      6*log(pB) + 9*log(1 - pB) +
+      4*log(pBB) + 6*log(1 - pBB)
+    }
 
+    # no Hot Hand MLE
+    pB_hat0 <- 10/25
 
-# Grading
+    # hot Hand MLE
+    pB_hat1   <- 6/15
+    pBB_hat1  <- 4/10
 
-| **Total**             | **15** |
-|-----------------------|:------:|
-| Ex 1                  |   2    |
-| Ex 2                  |   5    |
-| Ex 3                  |   5    |
-| Ex 4                  |   8    |
-| Workflow & formatting |   3    |
+    ll0 <- logL0(pB_hat0)
+    ll1 <- logL1(pB_hat1, pBB_hat1)
 
-The "Workflow & formatting" grade is to based on the organization of the assignment write up along with the reproducible workflow. This includes having an organized write up with neat and readable headers, code, and narrative, including properly rendered mathematical notation. It also includes having a reproducible Rmd or Quarto document that can be rendered to reproduce the submitted PDF.
+    #likelihood ratio test statistic
+
+    LR_stat <- -2 * (ll0 - ll1)
+
+    #chi squared pval
+
+    p_value <- pchisq(LR_stat, df=1, lower.tail=FALSE)
+
+    #tidy
+    list(
+      MLE_no_hot_hand    = pB_hat0,
+      MLE_hot_hand       = c(p_B = pB_hat1, p_B_after_B = pBB_hat1),
+      logLik_no_hot_hand = ll0,
+      logLik_hot_hand    = ll1,
+      LR_statistic       = LR_stat,
+      p_value            = p_value
+    )
+
+    ```
+
+The MLEs show that both models estimate the same probabilities $(p_b = .4)$ and produce similar log-likelihoods. Consequently, the likelihood ratio test statistic is essentially zero with a p-value near 1, indicating no evidence of a hot hand in this data.
+
+| Game | First five shots | Likelihood (no hot hand) | Likelihood (hot hand)       |
+|---------------|---------------|----------------------|--------------------|
+| 1    | BMMBB            | $$                       
+                           (1 - p_b)p^2_b(1-p_b)^2   
+                           $$                        | $$                          
+                                                      (1-p_b) \cdot p_b\cdot p_b   
+                                                      $$                           |
+| 2    | MBMBM            | $$                       
+                           (p_b^3)(1-p_b)^2          
+                           $$                        | $$                          
+                                                      p_b\cdot 1 - p_b             
+                                                      $$                           |
+| 3    | MMBBB            | $$                       
+                           p^2_b(1-p_b)^3            
+                           $$                        | $$                          
+                                                      p_{b}\cdot p_{b}             
+                                                      $$                           |
+| 4    | BMMMB            | $$                       
+                           (1-p_b)p^3_b(1-p_b)       
+                           $$                        | $$                          
+                                                      (1-p_b) \cdot p_b \cdot p_b  
+                                                      $$                           |
+| 5    | MMMMM            | $$                       
+                           p^5_b                     
+                           $$                        | $$                          
+                                                      p_b \cdot p_b                
+                                                      $$                           |
+
+# 

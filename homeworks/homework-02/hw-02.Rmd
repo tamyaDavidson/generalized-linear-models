@@ -1,72 +1,138 @@
 ---
 title: 'Exploring Distributions'
-author: "STA 310: Homework 2"
+author: "Tamya Davidson"
 output: pdf_document
 ---
-
-# Instructions
-
--   Write all narrative using full sentences. Write all interpretations and conclusions in the context of the data.
--   Be sure all analysis code is displayed in the rendered pdf.
--   If you are fitting a model, display the model output in a neatly formatted table. (The `tidy` and `kable` functions can help!)
--   If you are creating a plot, use clear and informative labels and titles.
--   Render and back up your work reguarly, such as using Github. 
--   When you're done, we should be able to render the final version of the Rmd document to fully reproduce your pdf.
-- Upload your pdf to Gradescope. Upload your Rmd, pdf (and any data) to Canvas. 
-
-These exercises come from BMLR or are adapted from BMLR, Chapter 3. 
 
 # Exercises
 
 ## Exercise 1
 
-At what value of $p$ is the variance of a binary random variable smallest? When is the variance the largest? Back up your answer empirically or mathematically. 
+At what value of $p$ is the variance of a binary random variable smallest? When is the variance the largest? Back up your answer empirically or mathematically.
 
-## Exercise 2 
+*For a binary random variable, the variance (Var(X) = p(1-p)) is the smallest when p is equal to 0 or p = 1 (Variance = 0 here) and maximized at p = 1/2.*
+
+*Var(X) = p(1-p) is a concave quadratic with the derivative being 1-2p = 0 at p = 1/2, thus this is the unique maximum.*
+
+## Exercise 2
 
 How are hypergeometric and binomial random variables different? How are they similar?
+
+*Both hypergeometric and binomial random variables count the number of successes in a fixed number of trails and they have similar means when the population that we are making inference about is large. They differ because the binomial assumes independent trails with constant success probability (i.e. sampling with replacement) while the hypergeometric models dependent trials with changing success probabilities (i.e. sampling without replacement).*
 
 ## Exercise 3
 
 How are exponential and Poisson random variables related?
 
-## Exercise 4 
+*Poisson random variables counts how many events occur in a fixed time interval while the exponential random variable models the waiting time until the next event. However, they are linked through a Poisson process, where inter arrival times are i.i.d. exponential and the number of arrivals in time t is Poisson with mean* $$\lambda t$$*.*
+
+## Exercise 4
 
 How are geometric and exponential random variables similar? How are they different?
+
+*Both geometric and exponential random variables model waiting times until the first success or event occurs and they share the memory less idea. They differ because the geometric distribution is discrete while the exponential distribution is continuous.*
 
 ## Exercise 5
 
 A university's college of sciences is electing a new board of 5 members. There are 35 applicants, 10 of which come from the math department. What distribution could be helpful to model the probability of electing $X$ board members from the math department?
 
+*A hypergeometric distribution would be appropiate to model the probability of electing* $$X$$ *board members from the math department since 5 board members will be selected without replacement from 35 applicants while 10 of these would be considered success.*
+
 ## Exercise 6
 
 Chapter 1 asked you to consider a scenario where *"The Minnesota Pollution Control Agency is interested in using traffic volume data to generate predictions of particulate distributions as measured in counts per cubic feet."* What distribution might be useful to model this count per cubic foot? Why?
 
+*A Poisson distribution would be useful because it models the number of events occurring in a fixed volume when events happen independently at an average rate. Counts per cubic foot are non negative and a Poisson approach could be useful especially modeling individual particles that are rare.*
+
 ## Exercise 7
 
-Chapter 1 also asked you to consider a scenario where *"Researchers are attempting to see if socioeconomic status and parental stability are predictive of low birthweight.  They classify a low birthweight as below 2500 g, hence our response is binary: 1 for low birthweight, and 0 when the birthweight is not low."* What distribution might be useful to model if a newborn has low birthweight?
+Chapter 1 also asked you to consider a scenario where *"Researchers are attempting to see if socioeconomic status and parental stability are predictive of low birthweight. They classify a low birthweight as below 2500 g, hence our response is binary: 1 for low birthweight, and 0 when the birthweight is not low."* What distribution might be useful to model if a newborn has low birthweight?
+
+*A Bernoulli distribution would be appropriate here since each newborn outcome is binary: low birthweight (1) , not low birthweight (0). However if there are multiple births, the total number of low birthweight infants could be modeled as a binomial distribution.*
 
 ## Exercise 8
 
-Chapter 1 also asked you to consider a scenario where *"Researchers are interested in how elephant age affects mating patterns among males.  In particular, do older elephants have greater mating success, and is there an optimal age for mating among males?  Data collected includes, for each elephant, age and number of matings in a given year."* Which distribution would be useful to model the number of matings in a given year for these elephants? Why?
+Chapter 1 also asked you to consider a scenario where *"Researchers are interested in how elephant age affects mating patterns among males. In particular, do older elephants have greater mating success, and is there an optimal age for mating among males? Data collected includes, for each elephant, age and number of matings in a given year."* Which distribution would be useful to model the number of matings in a given year for these elephants? Why?
+
+*A Poisson distribution would be useful because the number of matings in a year is a nonnegative count of events occurring over a fixed time period.\
+It is appropriate when matings occur independently at some age dependent average rate, which can be modeled by letting the Poisson mean depend on age.*
 
 ## Exercise 9
 
 Describe a scenario which could be modeled using a gamma distribution.
 
+*A Gamma distribution can model the total waiting time between customers. For example, if we raised the question of how long it would take for the 5th customer to arrive at a restaurant, we would use a Gamma distribution.*
+
 ## Exercise 10
 
-__Beta-binomial distribution.__ We can generate more distributions by mixing two random variables. \index{mixture model} Beta-binomial random variables are binomial random variables with fixed $n$ whose parameter $p$ follows a beta distribution with fixed parameters $\alpha, \beta$. In more detail, we would first draw $p_1$ from our beta distribution, and then generate our first observation $y_1$, a random number of successes from a binomial ($n, p_1$) distribution. Then, we would generate a new $p_2$ from our beta distribution, and use a binomial distribution with parameters $n, p_2$ to generate our second observation $y_2$. We would continue this process until desired.
+**Beta-binomial distribution.** We can generate more distributions by mixing two random variables. \index{mixture model} Beta-binomial random variables are binomial random variables with fixed $n$ whose parameter $p$ follows a beta distribution with fixed parameters $\alpha, \beta$. In more detail, we would first draw $p_1$ from our beta distribution, and then generate our first observation $y_1$, a random number of successes from a binomial ($n, p_1$) distribution. Then, we would generate a new $p_2$ from our beta distribution, and use a binomial distribution with parameters $n, p_2$ to generate our second observation $y_2$. We would continue this process until desired.
 
-Note that all of the observations $y_i$ will be integer values from $0, 1, \ldots, n$.  With this in mind, use `rbinom()` to simulate 1,000 observations from a plain old vanilla binomial random variable with $n=10$ and $p=0.8$. Plot a histogram of these binomial observations. Then, do the following to generate a beta-binomial distribution:
+Note that all of the observations $y_i$ will be integer values from $0, 1, \ldots, n$. With this in mind, use `rbinom()` to simulate 1,000 observations from a plain old vanilla binomial random variable with $n=10$ and $p=0.8$. Plot a histogram of these binomial observations. Then, do the following to generate a beta-binomial distribution:
 
-a. Draw $p_i$ from the beta distribution with $\alpha=4$ and $\beta=1$.
-b. Generate an observation $y_i$ from a binomial distribution with $n=10$ and $p = p_i$.
-c. Repeat (a) and (b) 1,000 times ($i=1,\ldots,1000$).
-d. Plot a histogram of these beta-binomial observations.  
-    
-Compare the histograms of the "plain old" binomial and beta-binomial distributions.  How do their shapes, standard deviations, means, possible values, etc. compare?  
-    
+a.  Draw $p_i$ from the beta distribution with $\alpha=4$ and $\beta=1$.
+
+    ```{r}
+    set.seed(100)
+
+    p_vals <- rbeta(1000,shape1 = 4, shape2 = 1)
+
+    head(p_vals)
+    ```
+
+b.  Generate an observation $y_i$ from a binomial distribution with $n=10$ and $p = p_i$.
+
+    ```{r}
+    y_i <- rbinom(1, size = 10, prob = p_vals[1])
+    y_i
+
+    ```
+
+c.  Repeat (a) and (b) 1,000 times ($i=1,\ldots,1000$).
+
+    ```{r}
+    set.seed(100)
+
+    p_vals <- rbeta(1000, shape1 = 4, shape2 = 1)
+    beta_binom_obs <- rbinom(1000, size = 10, prob = p_vals)
+
+
+    head(beta_binom_obs)
+
+    ```
+
+d.  Plot a histogram of these beta-binomial observations.
+
+    ```{r}
+    hist(
+      beta_binom_obs,
+      breaks = seq(-0.5, 10.5, 1),
+      main = "Histogram of Beta-Binomial Observations",
+      xlab = "Number of successes (y_i)",
+      col = "lightgreen"
+    )
+
+    ```
+
+```{r}
+set.seed(100)
+binom_obs <- rbinom(1000, size = 10, prob = 0.8)
+
+
+hist(
+  binom_obs,
+  breaks = seq(-0.5, 10.5, 1),
+  main = "Histogram of Binomial(10, 0.8)",
+  xlab = "Number of successes",
+  col = "lightblue"
+)
+
+
+```
+
+Compare the histograms of the "plain old" binomial and beta-binomial distributions. How do their shapes, standard deviations, means, possible values, etc. compare?
+
+*Both distributions take values from 0 to 10 and have roughly the same mean (about 8). The binomial histogram is tighter and more concentrated around its center, with most mass near 7--9, which shows a fixed success probability and a smaller standard deviation. The beta-binomial histogram is more spread out, with a longer tail and more skewness, because the success probability varies across observations. As a result, the beta-binomial has a larger variance than the plain binomial, even though their centers are similar.*
+
 # Grading
 
 | **Total**             | **33** |
