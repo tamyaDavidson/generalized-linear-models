@@ -56,13 +56,53 @@ a.  Create a histogram of Satellite. Is there preliminary evidence the number of
     library(ggplot2)
     library(tidyverse)
     library(readr)
-    crab <- read_csv("generalized-linear-models/homeworks/homework-04/data/crab.csv")
+    library(dplyr)
+    library(tidyr)
+    library(broom)
+    crab <-read.csv("data/crab.csv")
+
+
+
+    # convert all to factors.
+    crab$Spine <- factor(crab$Spine,
+                         levels = c(1, 2, 3),
+                         labels = c("Both good", "One worn/broken", "Both worn/broken"))
+
+    crab$Color <- factor(crab$Color,
+                         levels = c(1, 2, 3, 4),
+                         labels = c("Light medium", "Medium", "Dark medium", "Dark"))
+
+
+    hist(crab$Satellite,
+         breaks = seq(-0.5, max(crab$Satellite) + 0.5, by = 1),
+         main = "Histogram of Number of Satellites",
+         xlab = "Number of Satellites",
+         ylab = "Frequency",
+         col = "lightgray",
+         border = "white")
+
 
     ```
 
+    According to our histogram, there is evidence that the number of satellites can be modeled as a Poisson distribution because there are no non-negative numbers and the distribution is right skewed.
+
 b.  Fit a Poisson regression model including Width, Weight, and Spine as predictors. Display the model with the 95% confidence interval for each coefficient.
 
-c.  Describe the effect of Spine in terms of the mean number of satellites.
+    ```{r}
+    pois_mod <- glm(Satellite ~ Width + Weight + Spine,
+                    data = crab,
+                    family = poisson(link = "log"))
+    tidy(pois_mod)
+
+    ```
+
+    ```{r}
+    confint(pois_mod)
+    ```
+
+    a.  Describe the effect of Spine in terms of the mean number of satellites.
+
+        Crabs with one worn or broken spine are predicted to have about 19% fewer satellites on average than crabs with both spines good and crabs with both spines worn or broken have about 5% fewer satellites. However, these differences are not statistically significant so there is no strong evidence that spine condition affects the number of satellites.
 
 <!-- -->
 
@@ -72,11 +112,32 @@ c.  Describe the effect of Spine in terms of the mean number of satellites.
 
 a.  We would like to fit a quasi-Poisson regression model for this data. Briefly explain why we may want to consider fitting a quasi-Poisson regression model for this data.
 
+    We may want to fit a quasi-Poisson regression model to this data because it may exhibit overdispersion. In Poisson models , we assume that the mean and variance are equal but with this data, it is possible that these two are not which can equal overdispersion.
+
 b.  Fit a quasi-Poisson regression model that corresponds with the model chosen in the previous exercise. Display the model.
+
+    ```{r}
+
+    quasi_mod <- glm(Satellite ~ Width + Weight + Spine,
+                     data = crab,
+                     family = quasipoisson(link = "log"))
+
+
+    summary(quasi_mod)
+
+    ```
 
 c.  What is the estimated dispersion parameter? Show how this value is calculated.
 
+    The estimated dispersion parameter is 3.169. Estimated dispersion $\hat\phi$ is calculated using the following equation below.
+
+    $$
+    \hat\phi= \frac{Residual \space Deviance}{Residual\space degrees\space of \space freedom}
+    $$
+
 d.  How do the estimated coefficients change compared to the model chosen in the previous exercise? How do the standard errors change?
+
+    The coefficients do not change because the quasi poisson only adjusts the variance and not the mean structure of the model. However, the standard errors increased which indicates that there is infact overdisperion present.
 
 <!-- -->
 
@@ -88,6 +149,44 @@ Remember to set a seed so your simulations are reproducible!
 
 a.  Use the R function rpois() to generate 10,000 $x_i$ from a regular Poisson distribution, $X \sim \textrm{Poisson}(\lambda=1.5)$. Plot a histogram of this distribution and note its mean and variance. Next, let $Y \sim \textrm{Gamma}(r = 3, \lambda = 2)$ and use rgamma() to generate 10,000 random $y_i$ from this distribution.
 
+    ```{r}
+    set.seed(555)
+    x <- rpois(10000,lambda = 1.5)
+
+    hist(x,
+         breaks = seq(-0.5,max(x) + 0.5 , by = 1),
+         main = "Histogram of Poisson (1.5)",
+         xlab = "x",
+         col = "lightblue",
+         border = "white")
+
+    ```
+
+```{r}
+mean_x <- mean(x)
+var_x <- var(x)
+
+mean_x
+var_x
+```
+
+```{r}
+y <- rgamma(10000, shape = 3, rate = 2)
+hist(y,
+     main = "Histogram of Gamma(3, 2)",
+     xlab = "y",
+     col = "lightgray",
+     border = "white")
+```
+
+```{r}
+mean_y <- mean(y)
+var_y  <- var(y)
+
+mean_y
+var_y
+```
+
 Now, consider 10,000 different Poisson distributions where $\lambda_i = y_i$. Randomly generate one $z_i$ from each Poisson distribution. Plot a histogram of these $z_i$ and compare it to your original histogram of $X$ (where $X \sim \textrm{Poisson}(1.5)$). How do the means and variances compare?
 
 b.  A negative binomial distribution can actually be expressed as a gamma-Poisson mixture. In Part a, you looked at a gamma-Poisson mixture $Z \sim \textrm{Poisson}(\lambda)$ where $\lambda \sim \textrm{Gamma}(r = 3, \lambda' = 2)$.
@@ -95,6 +194,56 @@ b.  A negative binomial distribution can actually be expressed as a gamma-Poisso
 Find the parameters of a negative binomial distribution $X \sim \textrm{NegBinom}(r, p)$ such that $X$ is equivalent to $Z$. As a hint, the means of both distributions must be the same, so $\frac{r(1-p)}{p} = \frac{3}{2}$.
 
 Show through histograms and summary statistics that your negative binomial distribution is equivalent to the gamma-Poisson mixture. You can use rnbinom() in R.
+
+```{r}
+z <- rpois(10000, lambda = y)
+
+
+hist(z,
+     breaks = seq(-0.5, max(z)+0.5, by=1),
+     main = "Gamma-Poisson Mixture",
+     xlab = "z",
+     col = "lightgray",
+     border = "white")
+
+
+```
+
+```{r}
+mean_z <- mean(z)
+var_z  <- var(z)
+
+mean_z
+var_z
+
+```
+
+The means of the Poission(1.5) and the Gamma-Poisson distribution are equal, and the Gamma-Poisson model has a higher variance. The histogram is also similar.
+
+```{r}
+nb <- rnbinom(10000, size = 3, prob = 2/3)
+hist(nb,
+     breaks = seq(-0.5, max(nb)+0.5, by=1),
+     main = "Negative Binomial (r=3, p=2/3)",
+     xlab = "nb",
+     col = "lightgray",
+     border = "white")
+```
+
+```{r}
+mean_nb <- mean(nb)
+var_nb  <- var(nb)
+
+mean_nb
+var_nb
+
+```
+
+```{r}
+mean_z; var_z
+mean_nb; var_nb
+
+```
 
 c.  Make an argument that if you want a $\textrm{NegBinom}(r, p)$ random variable, you can instead sample from a Poisson distribution, where the $\lambda$ values are themselves sampled from a gamma distribution with parameters $r$ and $\lambda' = \frac{p}{1-p}$. You may show equivalency via the simulations or mathematically, however, make sure your arguments are precise and clear.
 
